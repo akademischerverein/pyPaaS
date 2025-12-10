@@ -44,7 +44,7 @@ def expandvars(value, vars, max_matches=50):
     if '$' not in value:
         return value
     if not _varprog:
-        re.compile(r'\$(\w+|\{[^}]*\})', re.ASCII)
+        _varprog = re.compile(r'\$(\w+|\{[^}]*\})', re.ASCII)
     
     i = 0
     matches = 0
@@ -52,9 +52,9 @@ def expandvars(value, vars, max_matches=50):
         m = _varprog.search(value, i)
         if not m:
             return value
+        matches += 1
         if matches == max_matches:
             raise RuntimeError('exhausted max_matches')
-        max_matches += 1
         i, j = m.span(0)
         name = m.group(1)
         if name.startswith('{') and name.endswith('}'):
