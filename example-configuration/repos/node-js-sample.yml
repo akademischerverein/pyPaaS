@@ -85,3 +85,8 @@ branches:
         # ssh deploy@host custom_cmds <repo> <branch> <cmd>
         custom_cmds: # defaults to {}
             npm_list: npm list
+
+        before_cmds: |
+            if [ -d "$HOME/.bin" ]; then
+                export PATH="$HOME/.bin:$PATH"
+            fi

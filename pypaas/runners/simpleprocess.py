@@ -15,6 +15,7 @@ from .base import BaseRunner
 
 runscript = options.main.get('runner_runscript_template', """#!/bin/sh
 cd {checkout.path}
+{before_cmds}
 {env_cmds}
 exec 2>&1
 exec {cmd}
@@ -113,6 +114,9 @@ class SimpleProcess(BaseRunner):
         for idx, s in enumerate(self.service_names):
             util.mkdir_p(os.path.expanduser('~/services-real/{}/log'.format(s)))
             env = self.get_process_env(idx=idx)
+            before_cmds = self.branch.config.get('before_cmds', '')
+            if not isinstance(before_cmds, list):
+                before_cmds = [before_cmds]
             args = dict(
                 checkout=self.branch.current_checkout,
                 branch=self.branch,
@@ -122,7 +126,8 @@ class SimpleProcess(BaseRunner):
                     'export {}={}'.format(
                         k, shlex.quote(str(v))
                     ) for k, v in env.items()
-                )
+                ),
+                before_cmds='\n'.join(before_cmds)
             )
             util.replace_file(
                 os.path.expanduser('~/services-real/{}/log/run'.format(s)),

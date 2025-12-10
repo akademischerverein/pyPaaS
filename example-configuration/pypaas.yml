@@ -14,6 +14,7 @@ ports: # Port range to use for nginx upstreams (and possibly more in the future)
 runner_runscript_template: |
   #!/bin/sh
   cd {checkout.path}
+  {before_cmds}
   {env_cmds}
   exec 2>&1
   exec {cmd}
